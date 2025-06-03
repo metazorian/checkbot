@@ -1,3 +1,4 @@
+console.log("🟢 Бот запущен и слушает сообщения");
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJpaGNyemdlZGJ5bGdqc3Rkd3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg4MzM0MjMsImV4cCI6MjA2NDQwOTQyM30.SyXqN_NKs-HW-neYSXMVmHtQ14a7QXLvCqd8Yn8mYuU";
 import { Bot } from "https://deno.land/x/grammy/mod.ts";
 import { Realtime } from "npm:ably";
@@ -36,6 +37,9 @@ bot.on("message:video", async (ctx) => {
     const residents = await residentRes.json();
     console.log("👥 Найдено:", residents);
     const resident = residents[0];
+    if (residents.length > 0) {
+      console.log("✅ Пользователь найден:", resident.username || resident.name || resident.telegram_id);
+    }
     if (!resident) return console.log("❌ Пользователь не найден");
 
     const deadline = new Date(resident.day_started_at);
@@ -90,3 +94,5 @@ bot.on("message:video", async (ctx) => {
 });
 
 bot.start();
+
+console.log("🚀 Бот стартовал");
