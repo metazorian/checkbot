@@ -1,7 +1,12 @@
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 console.log("🟢 Бот запущен и слушает сообщения");
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJpaGNyemdlZGJ5bGdqc3Rkd3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg4MzM0MjMsImV4cCI6MjA2NDQwOTQyM30.SyXqN_NKs-HW-neYSXMVmHtQ14a7QXLvCqd8Yn8mYuU";
+const supabase = createClient(
+  "https://rihcrzgedbylgjstdwrf.supabase.co",
+  SUPABASE_KEY
+);
 import { Bot } from "https://deno.land/x/grammy/mod.ts";
-import { Realtime } from "npm:ably";
+import Ably from "https://esm.sh/ably";
 
 const bot = new Bot("7583331035:AAGNqiVo5kDqdUN0t9WJNrlmW9L8yfyCljc");
 
@@ -68,7 +73,7 @@ bot.on("message:video", async (ctx) => {
         mission: newMissionEntry.mission,
         status: newMissionEntry.status,
         timestamp: newMissionEntry.timestamp,
-        created_at: uploadedISO
+        // created_at не нужен — Supabase ставит сам
       })
     });
     const missionInsertJson = await missionInsertRes.json().catch(() => "no json");
@@ -100,7 +105,7 @@ bot.on("message:video", async (ctx) => {
 
     console.log(`✅ ${status === "on_time" ? "Засчитано вовремя" : "Опоздание"} — обновления внесены`);
 
-    const ably = new Realtime("-lCLiw.nUWtfg:YxyYa23PsliG29gIzfYPTN52ZyrfR_7GfHXg2SNuQHg");
+    const ably = new Ably.Realtime("-lCLiw.nUWtfg:YxyYa23PsliG29gIzfYPTN52ZyrfR_7GfHXg2SNuQHg");
     const ablyChannel = ably.channels.get(`user.${userId}`);
 
     await ablyChannel.publish("mission_completed", {
