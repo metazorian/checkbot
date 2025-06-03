@@ -57,7 +57,12 @@ bot.on("message:video", async (ctx) => {
 
     const updatePayload: any = {
       last_video_at: uploadedISO,
-      missions: JSON.stringify([...resident.missions || [], newMissionEntry])
+      missions: JSON.stringify([
+        ...(typeof resident.missions === "string"
+          ? JSON.parse(resident.missions)
+          : resident.missions || []),
+        newMissionEntry
+      ])
     };
 
     if (onTime) {
