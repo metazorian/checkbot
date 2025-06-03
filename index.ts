@@ -5,7 +5,7 @@ const supabase = createClient(
   "https://rihcrzgedbylgjstdwrf.supabase.co",
   SUPABASE_KEY
 );
-import { Bot } from "https://deno.land/x/grammy/mod.ts";
+import { Bot } from "https://deno.land/x/grammy@v1.16.2/mod.ts";
 import Ably from "https://esm.sh/ably";
 
 const bot = new Bot("7583331035:AAGNqiVo5kDqdUN0t9WJNrlmW9L8yfyCljc");
