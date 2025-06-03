@@ -50,23 +50,36 @@ bot.on("message:video", async (ctx) => {
 
     const newMissionEntry = {
       day: resident.day,
-      mission: "upload_video",
+      mission: "upload_video", // в будущем будет динамически задаваться
       status,
       timestamp: uploadedISO
     };
 
+    const missionInsertRes = await fetch("https://rihcrzgedbylgjstdwrf.supabase.co/rest/v1/Missions", {
+      method: "POST",
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        telegram_id: userId,
+        day: newMissionEntry.day,
+        mission: newMissionEntry.mission,
+        status: newMissionEntry.status,
+        timestamp: newMissionEntry.timestamp,
+        created_at: uploadedISO
+      })
+    });
+    const missionInsertJson = await missionInsertRes.json().catch(() => "no json");
+    console.log("📘 Новая миссия добавлена:", missionInsertRes.status, missionInsertJson);
+
     const updatePayload: any = {
-      last_video_at: uploadedISO,
-      missions: [
-        ...(typeof resident.missions === "string"
-          ? JSON.parse(resident.missions)
-          : resident.missions || []),
-        newMissionEntry
-      ]
+      last_video_at: uploadedISO
     };
 
     if (onTime) {
-      updatePayload.growth_percent = (resident.srost || 0) + 1;
+      updatePayload.srost = (resident.srost || 0) + 1;
       updatePayload.streak = (resident.streak || 0) + 1;
     }
 
@@ -92,7 +105,7 @@ bot.on("message:video", async (ctx) => {
 
     await ablyChannel.publish("mission_completed", {
       mission_id: "upload_video",
-      growth: updatePayload.growth_percent || resident.srost || 0,
+      growth: updatePayload.srost || resident.srost || 0,
     });
     console.log("📡 Ably ивент отправлен ✅");
   }
